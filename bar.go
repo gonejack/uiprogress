@@ -36,7 +36,7 @@ var (
 // Bar represents a progress bar
 type Bar struct {
 	// Total of the total  for the progress bar
-	Total int
+	Total int64
 
 	// LeftEnd is character in the left most part of the progress indicator. Defaults to '['
 	LeftEnd byte
@@ -61,7 +61,7 @@ type Bar struct {
 
 	// timeElased is the time elapsed for the progress
 	timeElapsed time.Duration
-	current     int
+	current     int64
 
 	mtx *sync.RWMutex
 
@@ -73,7 +73,7 @@ type Bar struct {
 type DecoratorFunc func(b *Bar) string
 
 // NewBar returns a new progress bar
-func NewBar(total int) *Bar {
+func NewBar(total int64) *Bar {
 	return &Bar{
 		Total:    total,
 		Width:    Width,
@@ -88,7 +88,7 @@ func NewBar(total int) *Bar {
 }
 
 // Set the current count of the bar. It returns ErrMaxCurrentReached when trying n exceeds the total value. This is atomic operation and concurrency safe.
-func (b *Bar) Set(n int) error {
+func (b *Bar) Set(n int64) error {
 	b.mtx.Lock()
 	defer b.mtx.Unlock()
 
@@ -118,7 +118,7 @@ func (b *Bar) Incr() bool {
 }
 
 // Current returns the current progress of the bar
-func (b *Bar) Current() int {
+func (b *Bar) Current() int64 {
 	b.mtx.RLock()
 	defer b.mtx.RUnlock()
 	return b.current
